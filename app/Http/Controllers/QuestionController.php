@@ -3,17 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Question;
+use App\Vote;
 use App\User;
 use Illuminate\Support\Facades\Auth;
+
+use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Http\Request;
 
 class QuestionController extends Controller
 {
     public function index() {
-        $questions = Question::orderBy('created_at', 'DESC')->paginate(2);
-        $user = User::findOrFail(Auth::id());
+        $questions = Question::orderBy('created_at', 'DESC')->paginate(5);
+        // $user = User::findOrFail(Auth::id());
+        $vote = Vote::all();
 
-        return view('home', compact('questions', 'user'));
+        return view('home', compact('questions', 'vote'));
     }
 
     public function create() {
@@ -24,22 +28,24 @@ class QuestionController extends Controller
         $this->validate($request, [
             'title' => 'required',
             'content' => 'required'
-        ]);
+        ]); 
 
-        auth()->user()->questions()->create([
+        $id = auth()->user()->questions()->create([
             'title' => $request->title,
             'tag' => $request->tag,
             'content' => $request->content
-        ]);
+        ])->id;
 
-        return redirect()->route('profile.index', auth()->user()->id)->with('success', 'Question succesfully added');
+        return redirect()->route('question.show', $id)->with('success', 'Question succesfully added');
     }
 
     public function show($id) {
         $question = Question::findOrFail($id);
-        $user = User::findOrFail(auth()->user()->id);
+        // $user = User::findOrFail(auth()->user()->id);
+        $answers = Question::find($id)->answers;
+        $vote = Vote::all();
         
-        return view('question.show', compact('question', 'user'));
+        return view('question.show', compact('question', 'answers', 'vote'));
     }
 
     public function edit($id) {
@@ -65,11 +71,14 @@ class QuestionController extends Controller
             'content' => $request->content
         ]);
 
-        return redirect()->route('profile.index', auth()->user()->id)->with('success', 'Question Edited Successfully');
+        return redirect()->route('question.show', $id)->with('success', 'Question Edited Successfully');
     }
 
     public function destroy($id) {
+        // dd($id);
+        // $question = Question::findOrFail($id)->answers()->delete();
         $question = Question::findOrFail($id)->delete();
+        // $this->authorize('delete', $question);
 
         return redirect()->route('profile.index', auth()->user()->id)->with('success', 'Your Question Deleted Successfully');
     }

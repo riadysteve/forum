@@ -10,6 +10,7 @@
     <title>@yield('title')</title>
 
     <!-- Scripts -->
+    @stack('scripts')
     <script src="{{ asset('js/app.js') }}" defer></script>
 
     <!-- Fonts -->
@@ -19,7 +20,8 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
-    @stack('scripts')
+    
+
 </head>
 <body>
     <div id="app">
@@ -30,9 +32,9 @@
         
     </div>
 
-
-
+    
     @stack('scriptend')
+
 
 </body>
 </html>

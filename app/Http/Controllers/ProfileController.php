@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\Vote;
 use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
     public function index($user) {
         $user = User::findOrFail($user);
+        $vote = Vote::all();
 
-        return view('profile.index', compact('user'));
+        return view('profile.index', compact('user', 'vote'));
     }
 
     public function edit($user) {

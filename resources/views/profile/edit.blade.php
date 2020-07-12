@@ -1,6 +1,6 @@
-@extends('layouts.app')
+@extends('layouts.master')
 
-@section('title', 'StackOverflow')
+@section('title', 'Edit Profile | StackOverflow')
 
 @section('content')
   <section class="form mt-3 mb-5">
